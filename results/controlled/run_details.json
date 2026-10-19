@@ -1,0 +1,19 @@
+{
+  "seed": 42,
+  "dataset_path": "dataset/chest_xray/train",
+  "sample_count": 5216,
+  "train_n": 3129,
+  "validation_n": 1043,
+  "test_n": 1044,
+  "train_class_counts": [
+    805,
+    2324
+  ],
+  "test_class_counts": [
+    268,
+    776
+  ],
+  "ga_population": 20,
+  "ga_generations": 20,
+  "note": "All metrics from same held-out test split; scaler fitted on train only."
+}
