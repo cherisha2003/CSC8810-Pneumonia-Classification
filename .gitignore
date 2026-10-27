@@ -1,4 +1,7 @@
 dataset/
 venv/
+.venv/
 __pycache__/
+*.pyc
 .DS_Store
+controlled_run.log
