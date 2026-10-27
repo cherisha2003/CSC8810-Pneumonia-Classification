@@ -1,106 +1,385 @@
-# CSC 8810 - Pneumonia Classification
+# Pneumonia Classification Using DenseNet-121, Fuzzy Logic, and Genetic Algorithm Optimization
 
-Course project for CSC 8810 Computational Intelligence at Georgia State University.
+**Course:** CSC 8810 – Computational Intelligence  
+**University:** Georgia State University  
+**Student:** Cherisha Killari Giribabu
 
-This project evaluates pneumonia classification from chest X-ray images using DenseNet-121 feature extraction, Logistic Regression, fuzzy feature transformation, and Genetic Algorithm optimization.
+## 1. Project Overview
 
-## Project Files
+This project investigates pneumonia classification using chest X-ray images through a combination of deep feature extraction, machine learning, fuzzy logic, and genetic algorithm optimization.
 
-- `main.py` - runs the complete experiment
-- `demo.py` - GUI for testing chest X-ray images
-- `gradcam.py` - Grad-CAM visualization code
-- `preprocessing/` - image preprocessing
-- `feature_extraction/` - DenseNet-121 feature extraction
-- `fuzzy_system/` - fuzzy transformation
-- `genetic_algorithm/` - Genetic Algorithm optimization
-- `training/` - classifier training
-- `evaluation/` - evaluation functions
-- `results/` - generated plots and experiment results
-- `test img/` - sample images for testing the GUI
-- `model_baseline.pkl` - saved Logistic Regression baseline model
-- `scaler.pkl` - saved feature scaler
+The implementation uses:
 
-## Dataset
+- **DenseNet-121:** Extracts 1024-dimensional features from chest X-ray images.
+- **Logistic Regression:** Performs binary classification.
+- **Gaussian Fuzzy Transformation:** Converts extracted features into fuzzy membership values.
+- **Genetic Algorithm (GA):** Optimizes fuzzy membership parameters.
 
-This project uses the Chest X-Ray Images (Pneumonia) dataset available on Kaggle:
+The project includes two experiments:
+
+| Experiment | Description | Python File |
+|---|---|---|
+| Original Experiment | Original CSC 8810 implementation, including baseline, fuzzy, GA+Fuzzy, and random comparisons | `main.py` |
+| Controlled Experiment | Additional comparison using fixed data splits, training-only scaling, and a shared held-out test set | `controlled_experiment.py` |
+
+Both experiments are included in the **main branch** of this repository.
+
+The original experiment is retained for comparison with the course project results. The controlled experiment provides a more consistent evaluation of the three trained classifiers.
+
+---
+
+## 2. Repository Structure
+
+```text
+CSC8810-Pneumonia-Classification/
+│
+├── main.py
+├── controlled_experiment.py
+├── demo.py
+├── gradcam.py
+├── requirements.txt
+├── README.md
+│
+├── preprocessing/
+│   └── preprocess.py
+│
+├── feature_extraction/
+│   └── densenet_features.py
+│
+├── fuzzy_system/
+│   └── fuzzy_layer.py
+│
+├── genetic_algorithm/
+│   └── ga_optimizer.py
+│
+├── training/
+│   └── train_classifier.py
+│
+├── evaluation/
+│   └── evaluate.py
+│
+├── results/
+│   ├── Original experiment figures
+│   └── controlled/
+│       ├── metrics.csv
+│       ├── baseline_confusion.png
+│       ├── baseline_roc.png
+│       ├── fuzzy_confusion.png
+│       ├── fuzzy_roc.png
+│       ├── ga_fuzzy_confusion.png
+│       ├── ga_fuzzy_roc.png
+│       ├── ga_history.csv
+│       ├── ga_best_validation.png
+│       └── run_details.json
+│
+├── model_baseline.pkl
+├── scaler.pkl
+└── test img/
+```
+
+The chest X-ray dataset is not included in the repository because of its size.
+
+---
+
+## 3. Dataset
+
+**Dataset:** Chest X-Ray Images (Pneumonia)  
+**Source:** Kaggle – Paul Mooney
+
+Dataset link:
 
 https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia
 
-The dataset is not included in this repository because of its size.
+The experiments use the dataset's training subset containing **5,216 chest X-ray images**.
 
-After downloading and extracting the dataset, place it inside the project using the following structure:
+| Class | Images |
+|---|---:|
+| Normal | 1,341 |
+| Pneumonia | 3,875 |
+| **Total** | **5,216** |
+
+### Dataset Setup
+
+1. Download the dataset from Kaggle.
+2. Extract the downloaded archive.
+3. Create a folder named `dataset` inside the cloned repository.
+4. Arrange the extracted files as shown below.
 
 ```text
-dataset/
-└── chest_xray/
-    └── train/
-        ├── NORMAL/
-        └── PNEUMONIA/
+CSC8810-Pneumonia-Classification/
+└── dataset/
+    └── chest_xray/
+        └── train/
+            ├── NORMAL/
+            └── PNEUMONIA/
 ```
 
-The program expects the training dataset at:
+**Important:** Both experiments expect the images at:
 
 ```text
 dataset/chest_xray/train
 ```
 
-The training portion contains 5,216 chest X-ray images.
+The dataset path must be correct before running either experiment.
 
-## Requirements
+---
 
-The project was tested using Python 3.10.
+## 4. System Requirements
 
-The required Python packages are listed in `requirements.txt`.
+The original project was developed and tested using **Python 3.10**.
 
-## Installation
+The required libraries are listed in `requirements.txt`:
 
-Create a virtual environment:
+- NumPy
+- Pandas
+- Matplotlib
+- Scikit-learn
+- OpenCV
+- Joblib
+- TensorFlow
+- Seaborn
+
+The repository specifies TensorFlow 2.14.0 and NumPy 1.26.4.
+
+**Recommended environment:** Python 3.10 with a virtual environment.
+
+A GPU can accelerate DenseNet-121 feature extraction, but the implementation can also run on a CPU. CPU execution may take considerably longer.
+
+---
+
+## 5. Installation and Setup
+
+### Step 1 — Clone the Repository
+
+Open a terminal and run:
+
+```bash
+git clone https://github.com/cherisha2003/CSC8810-Pneumonia-Classification.git
+```
+
+Navigate to the project directory:
+
+```bash
+cd CSC8810-Pneumonia-Classification
+```
+
+### Step 2 — Create a Virtual Environment
 
 ```bash
 python3 -m venv venv
 ```
 
-Activate it on macOS/Linux:
+### Step 3 — Activate the Environment
+
+**macOS / Linux:**
 
 ```bash
 source venv/bin/activate
 ```
 
-On Windows:
+**Windows:**
 
 ```bash
 venv\Scripts\activate
 ```
 
-Install the required packages:
+### Step 4 — Install Dependencies
 
 ```bash
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 ```
 
-The first execution may download the pretrained ImageNet weights used by DenseNet-121.
+The first execution may download pretrained ImageNet weights for DenseNet-121.
 
-## Run the Full Experiment
+### Step 5 — Verify Dataset Placement
 
-Make sure the dataset is placed in the expected directory, then run:
+Confirm that the following folders exist:
+
+```text
+dataset/chest_xray/train/NORMAL
+dataset/chest_xray/train/PNEUMONIA
+```
+
+Once the dataset and dependencies are ready, either experiment can be executed.
+
+---
+
+## 6. Experiment 1 — Original CSC 8810 Implementation
+
+**File:** `main.py`
+
+### Run the Original Experiment
+
+From the repository root, execute:
 
 ```bash
 python main.py
 ```
 
-The program performs preprocessing, DenseNet-121 feature extraction, Logistic Regression baseline classification, fuzzy feature transformation, Genetic Algorithm optimization, cross-validation, and evaluation.
+### What This Experiment Does
 
-DenseNet features are extracted in batches to reduce memory usage.
+1. Loads and preprocesses chest X-ray images.
+2. Resizes images to 224 × 224 pixels.
+3. Extracts 1024-dimensional features using pretrained DenseNet-121.
+4. Applies feature standardization.
+5. Trains a Logistic Regression baseline.
+6. Applies Gaussian fuzzy feature transformation.
+7. Optimizes fuzzy parameters using a Genetic Algorithm.
+8. Performs the implemented evaluation and cross-validation procedures.
+9. Generates performance plots and saves the baseline model artifacts.
 
-The full experiment processes all 5,216 training images and may take some time to complete, especially when running on CPU.
+### Original Experiment Results
 
-Generated graphs are saved in the `results/` folder.
+The original course experiment reported:
 
-The program also saves the baseline model and feature scaler for use by the GUI.
+| Model | Reported Accuracy |
+|---|---:|
+| DenseNet-121 + Logistic Regression | 98.30% |
+| Fuzzy + Logistic Regression | 95.40% |
+| GA+Fuzzy + Logistic Regression | 94.20% |
+| Random Baseline | 53.50% |
 
-## Run the GUI Demo
+These values are retained from the original course experiment.
 
-The repository includes the saved baseline model and scaler, so the GUI can be tested without rerunning the full experiment.
+**Reproducibility note:** The original implementation uses randomized operations, and its model comparisons do not all use identical evaluation procedures. Consequently, a new execution may produce different numerical results.
+
+### Original Results
+
+Historical figures are stored in:
+
+```text
+results/
+```
+
+Examples include:
+
+```text
+results/ablation.png
+results/roc.png
+results/confusion.png
+results/tsne.png
+results/cv_fold_accuracies.png
+```
+
+The historical figures are retained from the original experiment. They should not be interpreted as outputs from the controlled experiment.
+
+---
+
+## 7. Experiment 2 — Controlled Comparison
+
+**File:** `controlled_experiment.py`
+
+This experiment was added to provide a more consistent comparison between the DenseNet baseline, Fuzzy, and GA+Fuzzy classifiers.
+
+It is separate from the original experiment and does not replace its saved results or GUI model.
+
+### Run the Controlled Experiment
+
+From the repository root, execute:
+
+```bash
+python controlled_experiment.py
+```
+
+### Experimental Configuration
+
+| Parameter | Configuration |
+|---|---|
+| Dataset | 5,216 chest X-ray images |
+| Feature extractor | DenseNet-121 |
+| Feature dimension | 1024 |
+| Random seed | 42 |
+| Training partition | 60% |
+| Validation partition | 20% |
+| Test partition | 20% |
+| Data splitting | Stratified |
+| Standardization | Scaler fitted on training data only |
+| Classifier | Logistic Regression |
+| GA population | 20 |
+| GA generations | 20 |
+
+### Controlled Experiment Procedure
+
+1. Load the dataset and extract DenseNet-121 features.
+2. Divide the data into stratified training, validation, and test partitions.
+3. Fit the `StandardScaler` using the training partition only.
+4. Train the baseline classifier.
+5. Apply fuzzy transformation using fixed randomly initialized parameters.
+6. Optimize fuzzy membership parameters using the Genetic Algorithm.
+7. Use training and validation data for GA optimization without accessing the held-out test labels.
+8. Train the final classifiers using the combined training and validation partitions.
+9. Evaluate all three classifiers on the same held-out test partition.
+10. Save evaluation metrics, ROC curves, confusion matrices, and GA optimization history.
+
+### Controlled Experiment Results
+
+The saved results in `results/controlled/metrics.csv` are:
+
+| Model | Test Accuracy | Balanced Accuracy | ROC AUC |
+|---|---:|---:|---:|
+| DenseNet Baseline | 98.28% | 97.74% | 0.9985 |
+| Fuzzy | 97.22% | 96.67% | 0.9954 |
+| GA+Fuzzy | 96.55% | 95.73% | 0.9960 |
+
+**Held-out test samples:** 1,044
+
+These results correspond to the recorded controlled experiment and are reported to the displayed precision.
+
+### Controlled Experiment Outputs
+
+All controlled experiment results are saved separately in:
+
+```text
+results/controlled/
+```
+
+**Evaluation metrics:**
+
+```text
+metrics.csv
+run_details.json
+```
+
+**Confusion matrices:**
+
+```text
+baseline_confusion.png
+fuzzy_confusion.png
+ga_fuzzy_confusion.png
+```
+
+**ROC curves:**
+
+```text
+baseline_roc.png
+fuzzy_roc.png
+ga_fuzzy_roc.png
+```
+
+**Genetic Algorithm results:**
+
+```text
+ga_history.csv
+ga_best_validation.png
+```
+
+The controlled experiment does not overwrite the original figures or saved GUI model.
+
+### Interpretation
+
+The DenseNet-121 baseline achieved the highest accuracy in the controlled comparison.
+
+The fuzzy and GA+Fuzzy approaches were evaluated to investigate whether feature transformation and genetic optimization improved classification performance.
+
+In the recorded experiment, neither approach outperformed the baseline.
+
+---
+
+## 8. Running the GUI Demo
+
+**File:** `demo.py`
+
+The repository includes a GUI for testing individual chest X-ray images.
 
 Run:
 
@@ -108,41 +387,82 @@ Run:
 python demo.py
 ```
 
-Click **Upload X-ray Image** and select a JPG, JPEG, or PNG chest X-ray image.
+### How to Use
 
-The application displays the predicted class and confidence score.
+1. Launch the application.
+2. Click **Upload X-ray Image**.
+3. Select a JPG, JPEG, or PNG image.
+4. View the predicted class and displayed confidence score.
 
-Sample images are available in the `test img/` folder.
+Sample images are available in:
 
-## Demo Model
+```text
+test img/
+```
 
-The GUI uses DenseNet-121 for feature extraction together with the saved feature scaler and Logistic Regression baseline classifier.
+### GUI Model
 
-The baseline classifier is used because it achieved the strongest performance among the evaluated approaches.
+The GUI uses:
 
-## Reproducibility Note
+- DenseNet-121 feature extraction
+- The saved feature scaler (`scaler.pkl`)
+- The saved Logistic Regression baseline (`model_baseline.pkl`)
 
-The Genetic Algorithm and some train/test operations involve randomized processes. Exact numerical results may therefore vary slightly between executions.
+**Important:** The GUI uses the original baseline classifier. It does not use the controlled experiment's GA+Fuzzy model.
 
-The figures in the `results/` directory represent the results retained from the original course project.
+---
 
-## Important Note
+## 9. Reproducibility and Experimental Limitations
 
-This project was developed for academic purposes only and is not intended for clinical diagnosis or medical decision-making.
+### Original Experiment
 
-## Controlled comparison (new, recommended for CSC 8901 review)
+The original experiment contains randomized processes, including Genetic Algorithm optimization and train/test operations.
 
-Run `python controlled_experiment.py` from the repository root after placing the Kaggle dataset as described above. This is **separate from the original course experiment** (`python main.py`) and does not overwrite the original plots or saved GUI model.
+Exact results may vary between executions.
 
-The controlled experiment uses a fixed seed (42), stratified 60% training / 20% validation / 20% held-out test partition, and fits `StandardScaler` on training data only. All three classifiers are tested on the **same untouched test indices**. GA fitness uses training and validation data only, remembers the best-ever candidate, and does not access test labels. The final classifiers are fitted on combined train+validation data using the chosen transformation parameters.
+Some preprocessing and evaluation choices in the original implementation also limit direct comparisons between methods.
 
-New outputs are saved under `results/controlled/`:
+### Controlled Experiment
 
-- `metrics.csv` — held-out accuracy, balanced accuracy, AUC for each model
-- `baseline_confusion.png`, `fuzzy_confusion.png`, `ga_fuzzy_confusion.png`
-- `baseline_roc.png`, `fuzzy_roc.png`, `ga_fuzzy_roc.png`
-- `ga_history.csv`, `ga_best_validation.png`, `run_details.json`
+The controlled experiment addresses several of these limitations through:
 
-**Original figure naming:** `main.py` generates `results/ablation_comparison.png`, `results/roc_curve.png`, and `results/confusion_matrix.png`, whereas historical files retained from the course project are `results/ablation.png`, `results/roc.png`, and `results/confusion.png`. These historical images are not claimed to have been regenerated by the controlled script. Only figures under `results/controlled/` are attributable to the new, fixed-split experiment.
+- A fixed random seed.
+- Stratified dataset partitioning.
+- Training-only standardization.
+- A shared held-out test set.
+- Separate validation data for Genetic Algorithm optimization.
 
-**Do not cite controlled metrics before running this script.** The Kaggle dataset is intentionally excluded from this repository. A full reproduction requires downloading it and the pretrained ImageNet weights. CPU runs may be lengthy. The existing GUI uses the original saved baseline artifacts; the controlled script does not replace them.
+The saved controlled experiment metrics represent a completed run. Running the script again allows the experiment to be reproduced, although small differences may occur depending on the software environment and hardware.
+
+### Additional Considerations
+
+The experiments use the training subset of a publicly available chest X-ray dataset.
+
+The results should not be interpreted as external clinical validation.
+
+Further evaluation on independent datasets would be required to assess generalization.
+
+---
+
+## 10. Quick Execution Reference
+
+| Task | Command or Location |
+|---|---|
+| Install dependencies | `python -m pip install -r requirements.txt` |
+| Run original experiment | `python main.py` |
+| Run controlled experiment | `python controlled_experiment.py` |
+| Run GUI | `python demo.py` |
+| View original figures | `results/` |
+| View controlled figures | `results/controlled/` |
+| View controlled metrics | `results/controlled/metrics.csv` |
+| View experiment configuration | `results/controlled/run_details.json` |
+
+**For reviewing the CSC 8901 Perspectives in CS paper, both experiments are relevant.** The original experiment documents the initial implementation and results, while the controlled experiment provides a shared-split evaluation of the trained classifiers.
+
+---
+
+## 11. Disclaimer
+
+This project was developed for academic and research purposes only.
+
+It is not intended for clinical diagnosis, medical decision-making, or deployment in healthcare settings.
